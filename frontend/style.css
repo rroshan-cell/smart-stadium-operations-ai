@@ -1,0 +1,524 @@
+:root {
+    --primary: #cf102d; /* FIFA Red */
+    --secondary: #002395; /* FIFA Blue */
+    --gold: #ffcc00;
+    --dark: #0a0a0c;
+    --dark-lighter: #16161a;
+    --glass: rgba(255, 255, 255, 0.03);
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --text-main: #e0e0e0;
+    --text-dim: #909090;
+    
+    /* Semantic Colors */
+    --green: #00ff88;
+    --red: #ff3333;
+    --yellow: #ffcc00;
+    --blue: #3399ff;
+    --white: #ffffff;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--dark);
+    color: var(--text-main);
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+}
+
+h1, h2, .stadium-name, .kpi-value {
+    font-family: 'Outfit', sans-serif;
+}
+
+.glass-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at 20% 30%, #1a1a2e 0%, #0a0a0c 100%);
+    z-index: -1;
+}
+
+.dashboard-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    padding: 10px;
+    gap: 10px;
+}
+
+/* GLASS CARD BASE */
+.glass-card {
+    background: var(--glass);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    padding: 15px;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+.card-header {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-dim);
+    margin-bottom: 15px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.card-header::before {
+    content: '';
+    display: block;
+    width: 4px;
+    height: 12px;
+    background: var(--primary);
+}
+
+/* HEADER */
+.main-header {
+    height: 70px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    background: rgba(255,255,255,0.02);
+    border-radius: 12px;
+    border: 1px solid var(--glass-border);
+}
+
+.stadium-brand {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.fifa-logo {
+    color: var(--white);
+    font-weight: 900;
+    font-style: italic;
+    font-size: 1.4rem;
+    padding: 2px 8px;
+    background: var(--primary);
+    border-radius: 4px;
+}
+
+.stadium-name {
+    font-size: 1.2rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+}
+
+.match-badge {
+    margin-left: 20px;
+    padding: 4px 12px;
+    background: var(--secondary);
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.header-right {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+.simulation-controls {
+    display: flex;
+    gap: 10px;
+}
+
+.glass-select {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--glass-border);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+}
+
+.sim-btn {
+    background: var(--gold);
+    color: black;
+    font-size: 0.75rem;
+    padding: 6px 12px;
+}
+
+.header-stat .label {
+    font-size: 0.65rem;
+    color: var(--text-dim);
+    display: block;
+}
+
+.header-stat .value {
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.system-status {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 6px 14px;
+    background: rgba(0,255,136,0.1);
+    border-radius: 4px;
+    color: var(--green);
+}
+
+.pulse-icon {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
+.pulse-icon.online {
+    background: var(--green);
+    box-shadow: 0 0 10px var(--green);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(0.95); opacity: 1; }
+    50% { transform: scale(1.2); opacity: 0.7; }
+    100% { transform: scale(0.95); opacity: 1; }
+}
+
+/* CONTENT GRID */
+.content-grid {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 240px 1fr 300px;
+    gap: 10px;
+    overflow: hidden;
+}
+
+/* SIDEBAR LEFT */
+.nav-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.nav-item {
+    color: var(--text-dim);
+    text-decoration: none;
+    padding: 12px 15px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    transition: all 0.3s;
+}
+
+.nav-item:hover, .nav-item.active {
+    background: rgba(255,255,255,0.05);
+    color: var(--white);
+    padding-left: 20px;
+}
+
+.nav-item.active {
+    border-left: 3px solid var(--primary);
+    background: linear-gradient(90deg, rgba(207, 16, 45, 0.1) 0%, transparent 100%);
+}
+
+.nav-divider {
+    height: 1px;
+    background: var(--glass-border);
+    margin: 15px 0;
+}
+
+/* MAIN CONTENT */
+.main-content {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    overflow-y: auto;
+    padding-right: 5px;
+}
+
+.kpi-row {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+}
+
+.kpi-card {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    transition: transform 0.3s;
+}
+
+.kpi-card:hover {
+    transform: translateY(-5px);
+    background: rgba(255,255,255,0.06);
+}
+
+.kpi-label {
+    font-size: 0.65rem;
+    color: var(--text-dim);
+}
+
+.kpi-value {
+    font-size: 1.4rem;
+    font-weight: 700;
+}
+
+.kpi-value.critical { color: var(--red); }
+
+.kpi-graph {
+    height: 3px;
+    border-radius: 2px;
+    margin-top: 5px;
+}
+
+.center-content {
+    display: grid;
+    grid-template-columns: 1fr 400px;
+    gap: 10px;
+}
+
+/* STADIUM MAP */
+.stadium-map-container {
+    height: 400px;
+    display: flex;
+    flex-direction: column;
+}
+
+.map-visual {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.gate {
+    transition: filter 0.3s;
+}
+
+.gate.red { fill: var(--red); filter: drop-shadow(0 0 5px var(--red)); }
+.gate.green { fill: var(--green); filter: drop-shadow(0 0 5px var(--green)); }
+.gate.yellow { fill: var(--yellow); filter: drop-shadow(0 0 5px var(--yellow)); }
+
+.gate-label {
+    font-size: 10px;
+    fill: var(--text-dim);
+    font-weight: 600;
+}
+
+/* CHAT CONTAINER */
+.chat-container {
+    height: 400px;
+    display: flex;
+    flex-direction: column;
+}
+
+.chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.message {
+    max-width: 85%;
+    padding: 10px 15px;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    line-height: 1.4;
+}
+
+.message.ai {
+    align-self: flex-start;
+    background: rgba(255,255,255,0.05);
+    border-bottom-left-radius: 2px;
+}
+
+.message.user {
+    align-self: flex-end;
+    background: var(--secondary);
+    color: white;
+    border-bottom-right-radius: 2px;
+}
+
+.chat-input-area {
+    padding-top: 10px;
+    border-top: 1px solid var(--glass-border);
+}
+
+.suggestions {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+}
+
+.badge {
+    font-size: 0.65rem;
+    padding: 4px 10px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--glass-border);
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.input-wrapper {
+    display: flex;
+    gap: 10px;
+}
+
+input[type="text"] {
+    flex: 1;
+    background: rgba(0,0,0,0.2);
+    border: 1px solid var(--glass-border);
+    border-radius: 6px;
+    padding: 10px 15px;
+    color: white;
+    font-size: 0.85rem;
+}
+
+button {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 0 20px;
+    border-radius: 6px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+/* INCIDENT FEED */
+.incident-feed-container {
+    height: 350px;
+}
+
+.incident-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 15px;
+}
+
+.incident-card {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid var(--glass-border);
+    padding: 15px;
+    border-radius: 10px;
+    border-left: 4px solid var(--gold);
+}
+
+.incident-card.critical { border-left-color: var(--red); }
+
+.incident-title {
+    font-weight: 700;
+    font-size: 0.9rem;
+    margin-bottom: 8px;
+}
+
+.incident-meta {
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    margin-bottom: 10px;
+}
+
+.incident-action {
+    background: rgba(255,255,255,0.05);
+    padding: 8px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    color: var(--gold);
+}
+
+/* RIGHT SIDEBAR */
+.sidebar-right {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.widget-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+}
+
+.val { font-weight: 600; color: var(--green); }
+.val.warning { color: var(--yellow); }
+.val.critical { color: var(--red); }
+
+.small-text { font-size: 0.7rem; color: var(--text-dim); margin-top: 5px; }
+
+/* LOGS */
+.system-logs {
+    height: 100px;
+    overflow-y: auto;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.log-entry {
+    font-size: 0.75rem;
+    padding: 4px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.02);
+}
+
+.log-entry .timestamp { color: var(--text-dim); }
+.log-entry .tag { font-weight: 700; margin-right: 10px; }
+.log-entry .tag.info { color: var(--blue); }
+.log-entry .tag.warning { color: var(--yellow); }
+.log-entry .tag.decision { color: var(--green); }
+
+/* CUSTOM SCROLLBAR */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+/* LOADING OVERLAY */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--dark);
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    transition: opacity 0.5s, visibility 0.5s;
+}
+
+.loading-overlay.hidden {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.loader {
+    width: 48px;
+    height: 48px;
+    border: 5px solid var(--glass-border);
+    border-bottom-color: var(--primary);
+    border-radius: 50%;
+    display: inline-block;
+    box-sizing: border-box;
+    animation: rotation 1s linear infinite;
+}
+
+@keyframes rotation {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
