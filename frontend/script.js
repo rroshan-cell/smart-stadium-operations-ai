@@ -1,4 +1,4 @@
-const BASE_URL = '/api/v1';
+const BASE_URL = 'https://smart-stadium-operations-ai.onrender.com/api/v1';
 
 class DashboardAPI {
     static async fetchSimState() {
@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const updateUI = async () => {
         const data = await DashboardAPI.fetchSimState();
-        
+
         // Hide loader on first successful fetch
         const loader = document.getElementById('loading-overlay');
         if (loader) loader.classList.add('hidden');
@@ -64,11 +64,11 @@ document.addEventListener('DOMContentLoaded', () => {
         animateValue(attendanceVal, parseInt(attendanceVal.textContent.replace(',', '')), telemetry.attendance, 1000);
         document.querySelector('.kpi-card:nth-child(1) .kpi-value').textContent = `${((telemetry.attendance / telemetry.max_capacity) * 100).toFixed(1)}%`;
         document.querySelector('.header-stat:nth-child(2) .value').textContent = `${telemetry.weather.temp}°C ${telemetry.weather.condition}`;
-        
+
         // 2. UPDATE GATES
         Object.keys(telemetry.gates).forEach(gateId => {
             const el = document.getElementById(gateId);
-            if(el) {
+            if (el) {
                 el.classList.remove('red', 'green', 'yellow');
                 el.classList.add(telemetry.gates[gateId]);
             }
@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // 3. AI ANALYSIS & ALERTS
         incidentList.innerHTML = '';
-        
+
         if (ai && ai.analysis) {
             addSystemLog(`Coordinator: ${ai.analysis}`, 'decision');
         }
@@ -95,7 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
             card.className = `incident-card ${alert.level === 'CRITICAL' || alert.priority === 'critical' ? 'critical' : ''}`;
             const conf = (ai && ai.confidence) ? (ai.confidence.score * 100).toFixed(0) : '90';
             const reco = (ai && ai.recommendations && ai.recommendations.length > 0) ? ai.recommendations[0].action : 'Monitor status';
-            
+
             card.innerHTML = `
                 <div class="incident-title">${alert.title || alert.message}</div>
                 <div class="incident-meta">AI CONFIDENCE: ${conf}%</div>
