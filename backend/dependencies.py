@@ -14,6 +14,14 @@ from agents.weather_intelligence_agent import WeatherIntelligenceAgent
 # Singleton services
 _gemini_service = None
 _coordinator = None
+_sim_engine = None
+
+def get_sim_engine() -> "SimulationEngine":
+    global _sim_engine
+    if _sim_engine is None:
+        from services.simulation_engine import SimulationEngine
+        _sim_engine = SimulationEngine()
+    return _sim_engine
 
 def get_gemini_service() -> GeminiService:
     global _gemini_service

@@ -1,18 +1,18 @@
-from fastapi import APIRouter, Body
+from fastapi import APIRouter, Body, Depends
 from services.simulation_engine import SimulationEngine
+from ..dependencies import get_sim_engine
 
 router = APIRouter()
 
-# Single simulation engine instance
-_sim_engine = SimulationEngine()
-
-
 @router.post("/start")
-async def start_simulation(scenario: str = Body(..., embed=True)):
+async def start_simulation(
+    scenario: str = Body(..., embed=True),
+    sim_engine: SimulationEngine = Depends(get_sim_engine)
+):
     """
     Start or switch the simulation scenario.
     """
-    _sim_engine.set_scenario(scenario)
+    sim_engine.set_scenario(scenario)
 
     return {
         "status": "started",
@@ -21,7 +21,9 @@ async def start_simulation(scenario: str = Body(..., embed=True)):
 
 
 @router.get("/state")
-async def get_simulation_state():
+async def get_simulation_state(
+    sim_engine: SimulationEngine = Depends(get_sim_engine)
+):
     """
     Returns the latest stadium simulation state.
 
@@ -31,7 +33,7 @@ async def get_simulation_state():
     chat or dedicated agent endpoints.
     """
 
-    state = _sim_engine.get_state()
+    state = sim_engine.get_state()
 
     return {
         "world": state,

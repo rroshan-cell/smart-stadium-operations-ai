@@ -1,5 +1,6 @@
 import asyncio
-from typing import List, Dict, Any
+import json
+from typing import Dict, Any
 from .base_agent import BaseAgent, AgentResponse, AgentRequest
 from services.gemini_service import GeminiService
 from services.prompt_manager import PromptManager
@@ -17,7 +18,7 @@ class CoordinatorAgent(BaseAgent):
     def add_agent(self, agent: BaseAgent):
         self.agents[agent.name] = agent
 
-    async def determine_routing(self, query: str) -> List[str]:
+    async def determine_routing(self, query: str) -> list[str]:
         """Use Gemini to decide which agents are relevant."""
         prompt = f"""
         Analyze this stadium operations query: "{query}"
@@ -31,36 +32,38 @@ class CoordinatorAgent(BaseAgent):
 
     async def process(self, request: AgentRequest) -> AgentResponse:
         logger.info(f"Coordinator analyzing query: {request.query}")
-        
+
         # 1. Routing
         selected_agent_names = await self.determine_routing(request.query)
         logger.info(f"Routing to agents: {selected_agent_names}")
 
         # 2. Parallel Execution
-        tasks = []
-        for name in selected_agent_names:
-            agent = self.agents[name]
-            tasks.append(agent.process(request))
-        
+        tasks = [self.agents[name].process(request) for name in selected_agent_names]
         agent_responses = await asyncio.gather(*tasks, return_exceptions=True)
-        
+
         # 3. Merging & Conflict Resolution
         successful_responses = [resp for resp in agent_responses if isinstance(resp, AgentResponse)]
-        
-        if not successful_responses:
-            return await super().process(request) # Fallback to direct Coordinator reasoning
 
-        # Synthesis Prompt
+        if not successful_responses:
+            return await super().process(request)  # Fallback to direct Coordinator reasoning
+
+        # Serialize responses to JSON for the LLM instead of Python repr
+        reports_json = json.dumps(
+            [r.model_dump() for r in successful_responses],
+            default=str,
+            indent=2
+        )
+
         synthesis_prompt = f"""
         Synthesize the following agent reports into a single operational response:
-        REPORTS: {successful_responses}
+        REPORTS: {reports_json}
         QUERY: {request.query}
         Resolve any conflicting directions and provide a unified command plan.
         """
-        
+
         final_decision = await self.gemini_service.generate_structured_response(
             prompt=synthesis_prompt,
             response_model=AgentResponse
         )
-        
+
         return final_decision

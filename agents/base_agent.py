@@ -1,10 +1,9 @@
-from abc import ABC, abstractmethod
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict
 from models.schemas import AgentResponse, AgentRequest
 from services.gemini_service import GeminiService
 from services.prompt_manager import PromptManager
 
-class BaseAgent(ABC):
+class BaseAgent:
     def __init__(self, name: str, mission: str, gemini_service: GeminiService):
         self.name = name
         self.mission = mission
@@ -13,12 +12,12 @@ class BaseAgent(ABC):
     async def process(self, request: AgentRequest) -> AgentResponse:
         """Core processing logic using GeminiService."""
         prompt = PromptManager.get_prompt(
-            self.name, 
-            query=request.query, 
+            self.name,
+            query=request.query,
             telemetry=request.telemetry,
             history=request.history
         )
-        
+
         response = await self.gemini_service.generate_structured_response(
             prompt=prompt,
             response_model=AgentResponse

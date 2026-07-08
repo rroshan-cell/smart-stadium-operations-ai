@@ -1,8 +1,9 @@
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 from typing import Dict, Any, List
-from ..dependencies import get_coordinator_agent
+from ..dependencies import get_coordinator_agent, get_sim_engine
 from agents.coordinator import CoordinatorAgent
+from services.simulation_engine import SimulationEngine
 from models.schemas import AgentRequest
 
 router = APIRouter()
@@ -21,7 +22,6 @@ async def route_to_agents(
     request: AgentRoutingRequest,
     coordinator: CoordinatorAgent = Depends(get_coordinator_agent)
 ):
-    # Call the actual coordinator process
     agent_request = AgentRequest(
         query=request.query,
         telemetry=request.telemetry_snapshot
@@ -30,41 +30,49 @@ async def route_to_agents(
     return result
 
 @router.get("/status")
-async def get_stadium_status():
+async def get_stadium_status(
+    sim_engine: SimulationEngine = Depends(get_sim_engine)
+):
+    """Returns live stadium status derived from the simulation engine."""
+    state = sim_engine.get_state()
+    telemetry = state["telemetry"]
+    num_alerts = len(telemetry.get("active_alerts", []))
     return {
-        "attendance": 78642,
-        "capacity_pct": 95.3,
-        "active_alerts": 3,
-        "avg_queue_time": "3m 45s",
-        "parking_occupancy": 84,
-        "ai_confidence": 0.98,
-        "gates": {
-            "gate-a": "red",
+        "attendance": int(telemetry.get("attendance", 70000)),
+        "capacity_pct": round((telemetry.get("attendance", 70000) / telemetry.get("max_capacity", 82500)) * 100, 1),
+        "active_alerts": num_alerts,
+        "avg_queue_time": telemetry.get("avg_queue_time", 3),
+        "parking_occupancy": round(telemetry.get("parking", 75), 1),
+        "ai_confidence": 0.95,
+        "scenario": state.get("scenario", "Normal Match"),
+        "gates": telemetry.get("gates", {
+            "gate-a": "green",
             "gate-b": "green",
-            "gate-c": "yellow",
+            "gate-c": "green",
             "gate-d": "green"
-        }
+        })
     }
 
 @router.get("/alerts")
-async def get_active_alerts():
-    return [
-        {
-            "id": "INC-001",
-            "title": "Medical: Cardiac Sector 112",
-            "priority": "critical",
-            "area": "Sector 112",
-            "action": "MedTeam 3 dispatched. Eta 2m.",
-            "confidence": 0.99,
-            "timestamp": "21:00"
-        },
-        {
-            "id": "INC-002",
-            "title": "Gate C Congestion",
-            "priority": "warning",
-            "area": "Gate C",
-            "action": "Opening Overflow Gate 2. Redirect signage active.",
+async def get_active_alerts(
+    sim_engine: SimulationEngine = Depends(get_sim_engine)
+):
+    """Returns active alerts from the live simulation engine plus any static standing alerts."""
+    state = sim_engine.get_state()
+    telemetry = state["telemetry"]
+    sim_alerts = telemetry.get("active_alerts", [])
+
+    # Enrich simulation alerts with required frontend fields if missing
+    enriched = []
+    for alert in sim_alerts:
+        enriched.append({
+            "id": alert.get("id", "SIM-001"),
+            "title": alert.get("title", "Simulation Alert"),
+            "priority": alert.get("priority", "warning"),
+            "area": alert.get("area", "Stadium General"),
+            "action": alert.get("action", "AI agents are monitoring the situation."),
             "confidence": 0.92,
-            "timestamp": "20:58"
-        }
-    ]
+            "timestamp": alert.get("timestamp", "")
+        })
+
+    return enriched

@@ -1,9 +1,10 @@
 fastapi
-uvicorn
+uvicorn[standard]
 google-generativeai
 pydantic
 pydantic-settings
 python-dotenv
 httpx
 pytest
-jinja2
+pytest-asyncio
+python-multipart

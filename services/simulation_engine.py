@@ -1,4 +1,3 @@
-import asyncio
 import time
 from typing import Dict, Any, List
 from datetime import datetime
@@ -22,9 +21,11 @@ class SimulationEngine:
         }
 
     def set_scenario(self, scenario_name: str):
+        # Reset to clean baseline first so previous scenario state does not bleed through
+        self.world_state = self._get_initial_state()
         self.current_scenario = scenario_name
         self.is_active = True
-        
+
         if scenario_name == "High Crowd Match":
             self.world_state["attendance"] = 82000
             self.world_state["avg_queue_time"] = 12
@@ -40,6 +41,7 @@ class SimulationEngine:
                 "id": "SEC-1", "title": "Suspicious Package - North Gate", "priority": "critical"
             })
         elif scenario_name == "Full Stadium Evacuation":
+            # All gates open for egress; no red gates during controlled evacuation
             self.world_state["gates"] = {"gate-a": "green", "gate-b": "green", "gate-c": "green", "gate-d": "green"}
             self.world_state["active_alerts"].append({
                 "id": "EVAC-1", "title": "GLOBAL EVACUATION INITIATED", "priority": "critical"

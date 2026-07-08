@@ -40,7 +40,7 @@ class GeminiService:
                 
                 # Execute Gemini call in a thread pool to avoid blocking async loop if SDK is synchronous
                 # Note: Most of genai SDK is currently blocking, so we wrap it
-                loop = asyncio.get_event_loop()
+                loop = asyncio.get_running_loop()
                 response = await asyncio.wait_for(
                     loop.run_in_executor(None, lambda: self.model.generate_content(prompt)),
                     timeout=timeout_seconds
@@ -69,11 +69,19 @@ class GeminiService:
         raise GeminiError(f"Failed to generate structured response after {retries} retries: {last_error}")
 
     async def chat(self, message: str, history: Optional[list] = None) -> str:
-        """Simple text-based chat interface."""
+        """Simple text-based chat interface for the stadium operations assistant."""
+        system_context = (
+            "You are an AI Operations Assistant for the FIFA World Cup 2026 Smart Stadium Command Center "
+            "at MetLife Stadium. You help stadium operations staff with crowd management, security, "
+            "emergency response, transportation, and visitor services. "
+            "Keep responses concise, actionable, and professional."
+        )
+        full_message = f"{system_context}\n\nOperator query: {message}"
         try:
             chat_session = self.model.start_chat(history=history or [])
-            response = await asyncio.get_event_loop().run_in_executor(
-                None, lambda: chat_session.send_message(message)
+            loop = asyncio.get_running_loop()
+            response = await loop.run_in_executor(
+                None, lambda: chat_session.send_message(full_message)
             )
             return response.text
         except Exception as e:

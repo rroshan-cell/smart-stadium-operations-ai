@@ -73,16 +73,13 @@ async def add_process_time_header(request: Request, call_next):
 app.add_exception_handler(AppError, app_error_handler)
 app.add_exception_handler(Exception, global_exception_handler)
 
+from fastapi.staticfiles import StaticFiles
+
 # Include Routers
 app.include_router(api_router, prefix=settings.API_V1_STR)
 
-@app.get("/")
-async def root():
-    return {
-        "message": "Welcome to Smart Stadium Operations AI",
-        "api_docs": f"{settings.API_V1_STR}/docs",
-        "status": "online"
-    }
+# Serve Frontend Static Assets
+app.mount("/", StaticFiles(directory="frontend", html=True), name="frontend")
 
 if __name__ == "__main__":
     import uvicorn

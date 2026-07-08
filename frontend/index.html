@@ -3,43 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FIFA 2026 | Smart Stadium Operations</title>
+    <title>FIFA 2026 | Smart Stadium AI Command Center</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="dark-theme">
-    <div id="loading-overlay" class="loading-overlay">
+    <!-- LOADING OVERLAY -->
+    <div id="loading-overlay" class="loading-overlay" role="status" aria-live="polite">
         <div class="loader"></div>
         <span>SCANNING STADIUM TELEMETRY...</span>
     </div>
+
     <div class="glass-bg"></div>
     <div class="dashboard-wrapper">
         <!-- TOP HEADER -->
-        <header class="main-header">
+        <header class="main-header" role="banner">
             <div class="header-left">
                 <div class="stadium-brand">
                     <span class="fifa-logo">FIFA</span>
                     <span class="stadium-name">METLIFE STADIUM</span>
                 </div>
-                <div class="match-badge">LIVE: ARG vs FRA (2-1) 75'</div>
+                <div class="match-badge" id="current-scenario-label">SCENARIO: NORMAL MATCH</div>
             </div>
+            
             <div class="header-right">
                 <div class="simulation-controls">
-                    <select id="scenario-select" class="glass-select" aria-label="Select Operational Space Scenarios">
-                        <option>Normal Match</option>
-                        <option>High Crowd Match</option>
-                        <option>Medical Emergency</option>
-                        <option>Severe Weather</option>
-                        <option>Security Threat</option>
-                        <option>Full Stadium Evacuation</option>
+                    <select id="scenario-select" class="glass-select" aria-label="Select Simulation Scenario">
+                        <option value="Normal Match">Normal Match</option>
+                        <option value="High Crowd Match">High Crowd Match</option>
+                        <option value="Medical Emergency">Medical Emergency</option>
+                        <option value="Severe Weather">Severe Weather</option>
+                        <option value="Security Threat">Security Threat</option>
+                        <option value="Full Stadium Evacuation">Full Stadium Evacuation</option>
                     </select>
-                    <button id="run-sim-btn" class="sim-btn" aria-label="Run Demo Scenario">RIZDEMO</button>
+                    <button id="run-sim-btn" class="sim-btn" aria-label="Run Selected Scenario">RUN SIMULATION</button>
                 </div>
-                <div class="header-stat"><span class="label">ATTENDANCE</span> <span class="value" id="current-attendance">0</span></div>
-                <div class="header-stat"><span class="label">WEATHER</span> <span class="value">24°C Sunny</span></div>
-                <div class="header-stat"><span class="label">TIME</span> <span class="value" id="clock">20:45:12</span></div>
+                <div class="header-stat"><span class="label">WEATHER</span> <span class="value" id="header-weather">--°C Clear</span></div>
+                <div class="header-stat"><span class="label">TIME</span> <span class="value" id="clock">--:--:--</span></div>
                 <div class="system-status">
                     <div class="pulse-icon online"></div>
                     <span>AI SYSTEM ONLINE</span>
@@ -49,110 +51,463 @@
 
         <div class="content-grid">
             <!-- LEFT SIDEBAR -->
-            <aside class="sidebar-left glass-card">
-                <nav class="nav-menu">
-                    <a href="#" class="nav-item active">Dashboard</a>
-                    <a href="#" class="nav-item">Operations</a>
-                    <a href="#" class="nav-item">Crowd</a>
-                    <a href="#" class="nav-item">Security</a>
-                    <a href="#" class="nav-item">Emergency</a>
-                    <a href="#" class="nav-item">Transportation</a>
-                    <a href="#" class="nav-item">Maintenance</a>
-                    <a href="#" class="nav-item">Visitor Support</a>
+            <aside class="sidebar-left glass-card" role="navigation" aria-label="Command Center Modules">
+                <nav class="nav-menu" role="tablist">
+                    <a href="#" class="nav-item active" role="tab" aria-selected="true" data-tab="dashboard">Dashboard</a>
+                    <a href="#" class="nav-item" role="tab" aria-selected="false" data-tab="crowd">Crowd Operations</a>
+                    <a href="#" class="nav-item" role="tab" aria-selected="false" data-tab="security">Security</a>
+                    <a href="#" class="nav-item" role="tab" aria-selected="false" data-tab="emergency">Emergency Response</a>
+                    <a href="#" class="nav-item" role="tab" aria-selected="false" data-tab="transportation">Transportation</a>
+                    <a href="#" class="nav-item" role="tab" aria-selected="false" data-tab="maintenance">Maintenance</a>
+                    <a href="#" class="nav-item" role="tab" aria-selected="false" data-tab="visitor">Visitor Support</a>
                     <div class="nav-divider"></div>
-                    <a href="#" class="nav-item">Analytics</a>
-                    <a href="#" class="nav-item">Settings</a>
+                    <a href="#" class="nav-item" role="tab" aria-selected="false" data-tab="analytics">Analytics</a>
+                    <a href="#" class="nav-item" role="tab" aria-selected="false" data-tab="settings">Settings</a>
                 </nav>
             </aside>
 
             <!-- MAIN CONTENT AREA -->
-            <main class="main-content">
-                <!-- KPI SECTION -->
-                <section class="kpi-row">
-                    <div class="kpi-card glass-card">
-                        <span class="kpi-label">CAPACITY %</span>
-                        <span class="kpi-value">95.2%</span>
-                        <div class="kpi-graph" style="width: 95%; background: var(--gold);"></div>
-                    </div>
-                    <div class="kpi-card glass-card">
-                        <span class="kpi-label">ACTIVE ALERTS</span>
-                        <span class="kpi-value critical">03</span>
-                        <div class="kpi-graph" style="width: 30%; background: var(--red);"></div>
-                    </div>
-                    <div class="kpi-card glass-card">
-                        <span class="kpi-label">AVG QUEUE</span>
-                        <span class="kpi-value">4m 12s</span>
-                        <div class="kpi-graph" style="width: 40%; background: var(--blue);"></div>
-                    </div>
-                    <div class="kpi-card glass-card">
-                        <span class="kpi-label">PARKING</span>
-                        <span class="kpi-value">82%</span>
-                        <div class="kpi-graph" style="width: 82%; background: var(--white);"></div>
-                    </div>
-                    <div class="kpi-card glass-card">
-                        <span class="kpi-label">AI CONFIDENCE</span>
-                        <span class="kpi-value">98%</span>
-                        <div class="kpi-graph" style="width: 98%; background: var(--green);"></div>
-                    </div>
-                </section>
-
-                <div class="center-content">
-                    <!-- LIVE STADIUM MAP -->
-                    <section class="stadium-map-container glass-card">
-                        <div class="card-header">LIVE STADIUM STATUS</div>
-                        <div class="map-visual">
-                            <svg viewBox="0 0 500 350" preserveAspectRatio="xMidYMid meet">
-                                <!-- Field -->
-                                <rect x="150" y="100" width="200" height="150" rx="4" class="map-field" fill="rgba(255,255,255,0.05)"/>
-                                <!-- Stands -->
-                                <path d="M50,50 L450,50 L450,300 L50,300 Z M100,100 L400,100 L400,250 L100,250 Z" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.2)"/>
-                                <!-- Gates -->
-                                <circle cx="250" cy="40" r="12" class="gate red" id="gate-a"/>
-                                <circle cx="460" cy="175" r="12" class="gate green" id="gate-b"/>
-                                <circle cx="250" cy="310" r="12" class="gate yellow" id="gate-c"/>
-                                <circle cx="40" cy="175" r="12" class="gate green" id="gate-d"/>
-                                
-                                <text x="250" y="25" text-anchor="middle" class="gate-label">GATE A</text>
-                                <text x="470" y="175" text-anchor="start" class="gate-label">GATE B</text>
-                                <text x="250" y="335" text-anchor="middle" class="gate-label">GATE C</text>
-                                <text x="30" y="175" text-anchor="end" class="gate-label">GATE D</text>
-                            </svg>
+            <main class="main-content" role="main">
+                
+                <!-- Tab 1: Dashboard Panel -->
+                <div class="panel active" id="panel-dashboard" role="tabpanel" aria-hidden="false">
+                    <!-- KPI SECTION -->
+                    <section class="kpi-row" aria-label="Key Performance Indicators">
+                        <div class="kpi-card glass-card">
+                            <span class="kpi-label">VENUE CAPACITY</span>
+                            <span class="kpi-value" id="kpi-capacity-val">--%</span>
+                            <div class="kpi-graph" id="kpi-capacity-graph" style="width: 0%; background: var(--gold);"></div>
+                        </div>
+                        <div class="kpi-card glass-card">
+                            <span class="kpi-label">LIVE ATTENDANCE</span>
+                            <span class="kpi-value" id="current-attendance">0</span>
+                            <div class="kpi-graph" style="width: 100%; background: var(--white);"></div>
+                        </div>
+                        <div class="kpi-card glass-card">
+                            <span class="kpi-label">ACTIVE ALERTS</span>
+                            <span class="kpi-value critical" id="kpi-alerts-val">00</span>
+                            <div class="kpi-graph" id="kpi-alerts-graph" style="width: 0%; background: var(--red);"></div>
+                        </div>
+                        <div class="kpi-card glass-card">
+                            <span class="kpi-label">AVG QUEUE TIME</span>
+                            <span class="kpi-value" id="kpi-queue-val">--m</span>
+                            <div class="kpi-graph" id="kpi-queue-graph" style="width: 0%; background: var(--blue);"></div>
+                        </div>
+                        <div class="kpi-card glass-card">
+                            <span class="kpi-label">PARKING OCCUPANCY</span>
+                            <span class="kpi-value" id="kpi-parking-val">--%</span>
+                            <div class="kpi-graph" id="kpi-parking-graph" style="width: 0%; background: var(--gold);"></div>
+                        </div>
+                        <div class="kpi-card glass-card">
+                            <span class="kpi-label">AI CONFIDENCE</span>
+                            <span class="kpi-value" id="kpi-confidence-val">--%</span>
+                            <div class="kpi-graph" id="kpi-confidence-graph" style="width: 0%; background: var(--green);"></div>
                         </div>
                     </section>
 
-                    <!-- AI CHAT PANEL -->
-                    <section class="chat-container glass-card">
-                        <div class="card-header">AI OPERATIONS ASSISTANT</div>
-                        <div class="chat-messages" id="chat-box">
-                            <div class="message ai">
-                                <p>Welcome, OPS Lead. I am monitoring live feeds. Currently detecting a <strong>minor bottleneck</strong> at Gate C.</p>
+                    <div class="center-content">
+                        <!-- LIVE STADIUM MAP -->
+                        <section class="stadium-map-container glass-card" aria-label="MetLife Stadium Visualizer">
+                            <div class="card-header">LIVE STADIUM STATUS</div>
+                            <div class="map-visual">
+                                <svg viewBox="0 0 500 350" preserveAspectRatio="xMidYMid meet">
+                                    <!-- Field -->
+                                    <rect x="150" y="100" width="200" height="150" rx="4" class="map-field" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.15)"/>
+                                    <!-- Stands -->
+                                    <path d="M50,50 L450,50 L450,300 L50,300 Z M100,100 L400,100 L400,250 L100,250 Z" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.15)"/>
+                                    
+                                    <!-- Gates -->
+                                    <circle cx="250" cy="40" r="14" class="gate green" id="gate-a" role="button" aria-label="Gate A Status" tabindex="0"/>
+                                    <circle cx="460" cy="175" r="14" class="gate green" id="gate-b" role="button" aria-label="Gate B Status" tabindex="0"/>
+                                    <circle cx="250" cy="310" r="14" class="gate green" id="gate-c" role="button" aria-label="Gate C Status" tabindex="0"/>
+                                    <circle cx="40" cy="175" r="14" class="gate green" id="gate-d" role="button" aria-label="Gate D Status" tabindex="0"/>
+                                    
+                                    <text x="250" y="22" text-anchor="middle" class="gate-label">GATE A</text>
+                                    <text x="475" y="179" text-anchor="start" class="gate-label">GATE B</text>
+                                    <text x="250" y="338" text-anchor="middle" class="gate-label">GATE C</text>
+                                    <text x="25" y="179" text-anchor="end" class="gate-label">GATE D</text>
+                                </svg>
                             </div>
-                        </div>
-                        <div class="chat-input-area">
-                            <div class="suggestions">
-                                <span class="badge">Redeploy Security?</span>
-                                <span class="badge">Gate C Status?</span>
-                                <span class="badge">Weather Forecast?</span>
+                        </section>
+
+                        <!-- AI CHAT ASSISTANT -->
+                        <section class="chat-container glass-card" aria-label="AI Operations Assistant">
+                            <div class="card-header">AI OPERATIONS ASSISTANT</div>
+                            <div class="chat-messages" id="chat-box" role="log">
+                                <!-- Loaded dynamically -->
                             </div>
-                            <div class="input-wrapper">
-                                <input type="text" placeholder="Type a command or question..." id="user-input">
-                                <button id="send-btn">SEND</button>
+                            <div class="chat-input-area">
+                                <div class="suggestions">
+                                    <span class="badge" tabindex="0" role="button">Redeploy Security?</span>
+                                    <span class="badge" tabindex="0" role="button">Gate C Status?</span>
+                                    <span class="badge" tabindex="0" role="button">Weather Forecast?</span>
+                                </div>
+                                <div class="input-wrapper">
+                                    <input type="text" placeholder="Type a command or question..." id="user-input" aria-label="Ask AI Ops assistant">
+                                    <button id="send-btn" aria-label="Send query">SEND</button>
+                                </div>
                             </div>
+                        </section>
+                    </div>
+
+                    <!-- AI INCIDENT FEED -->
+                    <section class="incident-feed-container glass-card" aria-label="AI Incident Logs">
+                        <div class="card-header">AI ACTIVE INCIDENT FEED</div>
+                        <div class="incident-list" id="incident-list">
+                            <!-- Cards will be injected here -->
                         </div>
                     </section>
                 </div>
 
-                <!-- INCIDENT FEED -->
-                <section class="incident-feed-container glass-card">
-                    <div class="card-header">AI INCIDENT FEED</div>
-                    <div class="incident-list" id="incident-list">
-                        <!-- Cards will be injected here -->
+                <!-- Tab 2: Crowd Operations Panel -->
+                <div class="panel" id="panel-crowd" role="tabpanel" aria-hidden="true" style="display:none;">
+                    <div class="panel-header-title">CROWD OPERATIONS MANAGEMENT</div>
+                    <div class="panel-grid-2">
+                        <div class="glass-card">
+                            <div class="card-header">Crowd Density Index</div>
+                            <div class="gauge-container">
+                                <div class="kpi-value" id="crowd-density-lbl">--%</div>
+                                <div class="progress-bar-bg" style="height: 12px; border-radius: 6px; background: rgba(0,0,0,0.3); overflow: hidden; margin-top: 10px;">
+                                    <div id="crowd-density-bar" style="width: 0%; height: 100%; background: var(--green); transition: width 0.8s;"></div>
+                                </div>
+                            </div>
+                            <div class="widget-row" style="margin-top: 20px;">
+                                <span>Max Egress Capacity</span>
+                                <span class="val">110,000 / hr</span>
+                            </div>
+                            <div class="widget-row">
+                                <span>Dynamic Target Gate</span>
+                                <span class="val" style="color: var(--gold);">Gate B / D</span>
+                            </div>
+                        </div>
+
+                        <div class="glass-card">
+                            <div class="card-header">Crowd Egress Hot Zones</div>
+                            <ul class="bullet-list">
+                                <li><strong>Gate C Concourse</strong>: Density 0.89 (Heavy queue bottlenecks).</li>
+                                <li><strong>Sector 112 Stands</strong>: High concentration (Egress slowed).</li>
+                                <li><strong>North Bus Loop</strong>: Moderate occupancy (Rapid turnover).</li>
+                                <li><strong>South Gate A</strong>: Flow optimal (Clear).</li>
+                            </ul>
+                        </div>
                     </div>
-                </section>
+
+                    <div class="panel-grid-2" style="margin-top: 10px;">
+                        <div class="glass-card">
+                            <div class="card-header">Predictive Congestion Metrics</div>
+                            <p class="panel-text" id="crowd-prediction">Egress delay risk is normal.</p>
+                        </div>
+                        <div class="glass-card">
+                            <div class="card-header">AI Crowd Recommendations</div>
+                            <ul class="bullet-list" id="crowd-recommendations">
+                                <!-- Injected -->
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="glass-card" style="margin-top: 10px;">
+                        <div class="card-header">AI Crowd Operations Summary</div>
+                        <div class="panel-text" id="crowd-ai-summary">Evaluating telemetry...</div>
+                    </div>
+                </div>
+
+                <!-- Tab 3: Security Panel -->
+                <div class="panel" id="panel-security" role="tabpanel" aria-hidden="true" style="display:none;">
+                    <div class="panel-header-title">SECURITY COMMAND OPERATIONS</div>
+                    
+                    <div class="panel-grid-3">
+                        <div class="glass-card">
+                            <div class="card-header">Venue Threat Assessment</div>
+                            <div class="kpi-value" id="security-level-val" style="font-size: 1.6rem; color: var(--green);">NORMAL</div>
+                            <p class="small-text" style="margin-top: 10px;">Continuous monitoring of ticket scanners and security patrols.</p>
+                        </div>
+                        <div class="glass-card">
+                            <div class="card-header">Security Personnel</div>
+                            <div class="kpi-value">142/150</div>
+                            <p class="small-text" style="margin-top: 10px;">Active patrols deployed in quadrants. 8 reserves standby.</p>
+                        </div>
+                        <div class="glass-card">
+                            <div class="card-header">CCTV Feeds</div>
+                            <div class="kpi-value" style="color: var(--blue);">100% Online</div>
+                            <p class="small-text" style="margin-top: 10px;">248 optical & thermal streams analyzed by AI visual agent.</p>
+                        </div>
+                    </div>
+
+                    <div class="panel-grid-2" style="margin-top: 10px;">
+                        <div class="glass-card">
+                            <div class="card-header">Active Optical Camera Matrix</div>
+                            <div class="cctv-grid">
+                                <div class="cctv-feed">
+                                    <div class="cctv-label">CAM 01 | Gate A (North)</div>
+                                    <div class="cctv-status">LIVE</div>
+                                </div>
+                                <div class="cctv-feed">
+                                    <div class="cctv-label">CAM 02 | Gate C Concourse</div>
+                                    <div class="cctv-status">LIVE</div>
+                                </div>
+                                <div class="cctv-feed">
+                                    <div class="cctv-label">CAM 03 | Inner Sector 102</div>
+                                    <div class="cctv-status">LIVE</div>
+                                </div>
+                                <div class="cctv-feed">
+                                    <div class="cctv-label">CAM 04 | West Transit Loop</div>
+                                    <div class="cctv-status">LIVE</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="glass-card">
+                            <div class="card-header">Recent Security Logs & Dispatch</div>
+                            <ul class="bullet-list" id="security-events-list">
+                                <!-- Injected -->
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab 4: Emergency Panel -->
+                <div class="panel" id="panel-emergency" role="tabpanel" aria-hidden="true" style="display:none;">
+                    <div class="panel-header-title">EMERGENCY RESPONSE DIRECTIVE</div>
+                    
+                    <div class="panel-grid-2">
+                        <div class="glass-card">
+                            <div class="card-header">Evacuation Directives</div>
+                            <div class="kpi-value" id="emergency-evac-status" style="font-size: 1.4rem;">STANDBY</div>
+                            <p class="small-text" style="margin-top: 8px;">Dynamic exit routing signage connected to fire controls. Status checks complete.</p>
+                        </div>
+                        
+                        <div class="glass-card">
+                            <div class="card-header">Life-Safety Units</div>
+                            <div class="widget-row">
+                                <span>Medical Triage Tents</span>
+                                <span class="val">03 Units (Optimal)</span>
+                            </div>
+                            <div class="widget-row">
+                                <span>Ambulance Dispatches</span>
+                                <span class="val">02 Standby</span>
+                            </div>
+                            <div class="widget-row">
+                                <span>Fire Command Alarms</span>
+                                <span class="val" style="color: var(--green);">NO ACTIVE ALARMS</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="glass-card" style="margin-top: 10px;">
+                        <div class="card-header">Active Medical & Life Safety Dispatch Queue</div>
+                        <ul class="bullet-list" id="emergency-dispatch-queue">
+                            <!-- Injected -->
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Tab 5: Transport Panel -->
+                <div class="panel" id="panel-transport" role="tabpanel" aria-hidden="true" style="display:none;">
+                    <div class="panel-header-title">TRANSPORTATION & INFRASTRUCTURE LOGISTICS</div>
+                    
+                    <div class="panel-grid-2">
+                        <div class="glass-card">
+                            <div class="card-header">Parking Lot Capacities</div>
+                            <div class="widget-row">
+                                <span>Lot A (Main North)</span>
+                                <span class="val" id="lot-a-occupancy">--%</span>
+                            </div>
+                            <div class="widget-row">
+                                <span>Lot B (East Oval)</span>
+                                <span class="val" id="lot-b-occupancy">--%</span>
+                            </div>
+                            <div class="widget-row">
+                                <span>Lot C (South Deck)</span>
+                                <span class="val" id="lot-c-occupancy">--%</span>
+                            </div>
+                        </div>
+                        
+                        <div class="glass-card">
+                            <div class="card-header">Regional Traffic and Flow Index</div>
+                            <div class="widget-row">
+                                <span>Route 3 Highway</span>
+                                <span class="val warning">Heavy Congestion</span>
+                            </div>
+                            <div class="widget-row">
+                                <span>Route 120 Concourse</span>
+                                <span class="val">Moderate Flow</span>
+                            </div>
+                            <div class="widget-row">
+                                <span>Turnpike Egress Loop</span>
+                                <span class="val">Optimal</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="panel-grid-2" style="margin-top: 10px;">
+                        <div class="glass-card">
+                            <div class="card-header">Transit Shuttle Status</div>
+                            <p class="panel-text" id="transport-shuttles">Evaluating shuttle dispatch...</p>
+                        </div>
+                        <div class="glass-card">
+                            <div class="card-header">Average Egress Transit ETA</div>
+                            <div class="kpi-value" style="font-size: 2.2rem; color: var(--gold);">35m</div>
+                            <p class="small-text">Average travel duration from stadium bowl seat to regional transit hub.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab 6: Maintenance Panel -->
+                <div class="panel" id="panel-maintenance" role="tabpanel" aria-hidden="true" style="display:none;">
+                    <div class="panel-header-title">FACILITIES & INFRASTRUCTURE MAINTENANCE</div>
+                    
+                    <div class="panel-grid-3">
+                        <div class="glass-card">
+                            <div class="card-header">Core Infrastructure Health</div>
+                            <div class="kpi-value" style="color: var(--green);">98.4%</div>
+                            <p class="small-text" style="margin-top: 8px;">Power generators, server rooms, and network switches active.</p>
+                        </div>
+                        <div class="glass-card">
+                            <div class="card-header">HVAC Grid Status</div>
+                            <div class="kpi-value">Optimal</div>
+                            <p class="small-text" style="margin-top: 8px;">Stands and indoor boxes airflow within standard temperature.</p>
+                        </div>
+                        <div class="glass-card">
+                            <div class="card-header">Cleanliness Index</div>
+                            <div class="kpi-value">94.8%</div>
+                            <p class="small-text" style="margin-top: 8px;">Assessed based on restroom sensors and custodial reports.</p>
+                        </div>
+                    </div>
+
+                    <div class="glass-card" style="margin-top: 10px;">
+                        <div class="card-header">Open Facilities Support Tickets</div>
+                        <ul class="bullet-list" id="maintenance-tickets">
+                            <!-- Injected -->
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Tab 7: Visitor Support Panel -->
+                <div class="panel" id="panel-visitor" role="tabpanel" aria-hidden="true" style="display:none;">
+                    <div class="panel-header-title">VISITOR SERVICES & ACCESSIBILITY SUPPORT</div>
+                    
+                    <div class="panel-grid-2">
+                        <div class="glass-card">
+                            <div class="card-header">Accessibility Infrastructure</div>
+                            <div class="widget-row">
+                                <span>Elevator Systems</span>
+                                <span class="val">14 / 15 Online</span>
+                            </div>
+                            <div class="widget-row">
+                                <span>Wheelchair Access Lanes</span>
+                                <span class="val" style="color: var(--green);">Optimal</span>
+                            </div>
+                            <div class="widget-row">
+                                <span>Sensory Rooms</span>
+                                <span class="val">02 Operational</span>
+                            </div>
+                        </div>
+                        
+                        <div class="glass-card">
+                            <div class="card-header">Concession and Facility Queues</div>
+                            <div class="widget-row">
+                                <span>Level 1 Concourse Concessions</span>
+                                <span class="val">5m Wait</span>
+                            </div>
+                            <div class="widget-row">
+                                <span>Level 2 Hospitality Lounges</span>
+                                <span class="val warning">12m Wait</span>
+                            </div>
+                            <div class="widget-row">
+                                <span>South Restrooms Block A4</span>
+                                <span class="val" style="color: var(--green);">Optimal Clean</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="glass-card" style="margin-top: 10px;">
+                        <div class="card-header">Wayfinding Reference FAQ</div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 10px;">
+                            <div class="faq-item">
+                                <div style="font-weight: 600; font-size: 0.8rem; margin-bottom: 4px; color: var(--gold);">Q: How do guests navigate from Section 112 to West Transit Loop?</div>
+                                <div class="small-text">A: Follow signage to Gate D, then take the ramp to the western bus queue terminals. Access maps are updated on client devices.</div>
+                            </div>
+                            <div class="faq-item">
+                                <div style="font-weight: 600; font-size: 0.8rem; margin-bottom: 4px; color: var(--gold);">Q: Where is the nearest sensory room located?</div>
+                                <div class="small-text">A: Concourse Level 2, near Section 202. Direct pathway routes are illuminated on the visual wayfinding screens.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab 8: Analytics Panel -->
+                <div class="panel" id="panel-analytics" role="tabpanel" aria-hidden="true" style="display:none;">
+                    <div class="panel-header-title">REAL-TIME TELEMETRY ANALYTICS</div>
+                    
+                    <div class="panel-grid-2">
+                        <div class="glass-card chart-container-card">
+                            <div class="card-header">LIVE ATTENDANCE TREND</div>
+                            <div class="chart-wrapper">
+                                <canvas id="chart-attendance"></canvas>
+                            </div>
+                        </div>
+                        <div class="glass-card chart-container-card">
+                            <div class="card-header">GATE QUEUE TIME TREND</div>
+                            <div class="chart-wrapper">
+                                <canvas id="chart-queue"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="panel-grid-2" style="margin-top: 10px;">
+                        <div class="glass-card chart-container-card">
+                            <div class="card-header">PARKING LOT OCCUPANCY RATE</div>
+                            <div class="chart-wrapper">
+                                <canvas id="chart-parking"></canvas>
+                            </div>
+                        </div>
+                        <div class="glass-card chart-container-card">
+                            <div class="card-header">AI SYSTEM ACTIVE ALERTS RATE</div>
+                            <div class="chart-wrapper">
+                                <canvas id="chart-alerts"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab 9: Settings Panel -->
+                <div class="panel" id="panel-settings" role="tabpanel" aria-hidden="true" style="display:none;">
+                    <div class="panel-header-title">COMMAND CENTER CONFIGURATION</div>
+                    
+                    <div class="glass-card" style="max-width: 600px; margin: 0 auto;">
+                        <div class="card-header">SYSTEM VARIABLES & SERVICES</div>
+                        <form id="settings-form" class="settings-form" style="display: flex; flex-direction: column; gap: 15px; margin-top: 15px;">
+                            <div style="display: flex; flex-direction: column; gap: 5px;">
+                                <label for="settings-api-base" style="font-size: 0.75rem; font-weight: 600; color: var(--text-dim);">API BASE ENDPOINT URL</label>
+                                <input type="text" id="settings-api-base" style="width: 100%;" required>
+                            </div>
+
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                                <div style="display: flex; flex-direction: column; gap: 5px;">
+                                    <label for="settings-poll-rate" style="font-size: 0.75rem; font-weight: 600; color: var(--text-dim);">TELEMETRY REFRESH RATE (SECONDS)</label>
+                                    <input type="number" id="settings-poll-rate" min="1" max="60" required>
+                                </div>
+                                <div style="display: flex; flex-direction: column; gap: 5px;">
+                                    <span style="font-size: 0.75rem; font-weight: 600; color: var(--text-dim); margin-bottom: 5px;">OPERATIONAL LOG POLLING</span>
+                                    <label class="switch-container" style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                                        <input type="checkbox" id="settings-poll-active" style="width: auto;">
+                                        <span style="font-size: 0.8rem; color: #fff;">Enable live data stream</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div style="display: flex; justify-content: flex-end; gap: 10px; border-top: 1px solid var(--glass-border); padding-top: 15px; margin-top: 10px;">
+                                <button type="button" id="settings-clear-chat" style="background: rgba(255,51,51,0.15); border: 1px solid var(--red); color: var(--red);">RESET CHAT LOGS</button>
+                                <button type="submit" style="background: var(--gold); color: black;">APPLY CHANGES</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
             </main>
 
-            <!-- RIGHT SIDEBAR -->
-            <aside class="sidebar-right">
+            <!-- RIGHT SIDEBAR (HOSPITALITY/RESOURCES/PREDICTIVES) -->
+            <aside class="sidebar-right" role="complementary" aria-label="Support Widgets">
                 <div class="widget glass-card">
                     <div class="card-header">HOSPITALITY & FACILITIES</div>
                     <div class="widget-row"><span>Food Queue (L2)</span> <span class="val warning">12m</span></div>
@@ -167,20 +522,34 @@
                 </div>
                 <div class="widget glass-card">
                     <div class="card-header">PREDICTIVE ANALYTICS</div>
-                    <p class="small-text">Estimated exit time: 22:15</p>
-                    <p class="small-text">Post-match congestion risk: <strong>HIGH</strong></p>
+                    <p class="small-text">Estimated exit time: <strong>22:15</strong></p>
+                    <p class="small-text">Post-match congestion risk: <strong style="color: var(--red);">HIGH</strong></p>
                 </div>
             </aside>
         </div>
 
         <!-- BOTTOM LOGS -->
-        <footer class="system-logs glass-card">
-            <div class="log-entry"><span class="timestamp">[20:44:01]</span> <span class="tag info">INFO</span> CoordinatorAgent: Initialized sweep of all thermal sensors.</div>
-            <div class="log-entry"><span class="timestamp">[20:44:12]</span> <span class="tag warning">WARN</span> CrowdManagement: Density at Gate C rising above 0.85.</div>
-            <div class="log-entry"><span class="timestamp">[20:44:30]</span> <span class="tag decision">DECISION</span> AI Orchestrator: Redirecting arriving traffic to Lot P4.</div>
+        <footer class="system-logs glass-card" role="contentinfo" aria-label="Operational Log timeline">
+            <div class="log-entry"><span class="timestamp">[13:28:35]</span> <span class="tag info">INFO</span> CoordinatorAgent: Initialized sweep of all thermal sensors.</div>
+            <div class="log-entry"><span class="timestamp">[13:28:02]</span> <span class="tag warning">WARN</span> CrowdManagement: Density at Gate C rising above 0.85.</div>
+            <div class="log-entry"><span class="timestamp">[13:27:30]</span> <span class="tag decision">DECISION</span> AI Orchestrator: Redirecting arriving traffic to Lot P4.</div>
         </footer>
     </div>
 
+    <!-- Chart.js and Modules script tag loading -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="js/Utils.js"></script>
+    <script src="js/DashboardAPI.js"></script>
+    <script src="js/ToastManager.js"></script>
+    <script src="js/LoadingManager.js"></script>
+    <script src="js/ClockManager.js"></script>
+    <script src="js/AttendanceAnimator.js"></script>
+    <script src="js/GateManager.js"></script>
+    <script src="js/IncidentFeed.js"></script>
+    <script src="js/SimulationController.js"></script>
+    <script src="js/ChatController.js"></script>
+    <script src="js/SidebarController.js"></script>
+    <script src="js/DashboardController.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
