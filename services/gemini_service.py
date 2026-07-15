@@ -73,10 +73,11 @@ class GeminiService:
         """Simple text-based chat interface."""
         try:
             chat_session = self.model.start_chat(history=history or [])
-            response = await asyncio.get_event_loop().run_in_executor(
+            loop = asyncio.get_running_loop()
+            response = await loop.run_in_executor(
                 None, lambda: chat_session.send_message(message)
             )
             return response.text
         except Exception as e:
-            logger.error(f"Chat failed: {str(e)}")
-            raise GeminiError("Failed to communicate with Gemini")
+            logger.exception("Gemini chat failed")
+            raise GeminiError(str(e))
