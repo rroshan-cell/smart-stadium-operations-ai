@@ -24,12 +24,15 @@ async def app_error_handler(request: Request, exc: AppError):
         }
     )
 
+import traceback
+
 async def global_exception_handler(request: Request, exc: Exception):
-    # Log the full traceback here in production
+    traceback.print_exc()
+
     return JSONResponse(
-        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        status_code=500,
         content={
-            "error": "An unexpected error occurred into the system.",
-            "status": "error"
+            "exception": exc.__class__.__name__,
+            "message": str(exc)
         }
     )
