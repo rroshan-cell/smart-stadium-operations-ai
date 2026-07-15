@@ -20,3 +20,15 @@ def gemini_debug():
         "has_settings_key": bool(settings.GEMINI_API_KEY),
         "model": settings.GEMINI_MODEL
     }
+
+@router.get("/groq-debug")
+def groq_debug():
+    import os
+    from backend.config import settings
+
+    return {
+        "has_key": bool(settings.GROQ_API_KEY),
+        "key_prefix": settings.GROQ_API_KEY[:10] if settings.GROQ_API_KEY else None,
+        "env_key": bool(os.getenv("GROQ_API_KEY")),
+        "model": settings.AI_MODEL
+    }    
