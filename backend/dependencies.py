@@ -1,6 +1,4 @@
 import os
-# pyrefly: ignore [missing-import]
-import google.generativeai as genai
 from .config import settings
 from services.gemini_service import GeminiService
 from agents.coordinator import CoordinatorAgent
@@ -26,11 +24,10 @@ def get_sim_engine() -> "SimulationEngine":
 
 def get_gemini_service() -> GeminiService:
     global _gemini_service
+
     if _gemini_service is None:
-        api_key = settings.GEMINI_API_KEY or os.getenv("GEMINI_API_KEY")
-        if api_key:
-            genai.configure(api_key=api_key)
         _gemini_service = GeminiService()
+
     return _gemini_service
 
 def get_coordinator_agent() -> CoordinatorAgent:
