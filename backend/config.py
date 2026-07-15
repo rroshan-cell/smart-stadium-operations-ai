@@ -10,10 +10,9 @@ class Settings(BaseSettings):
     # Security
     ALLOWED_HOSTS: List[str] = ["*"]
 
-    # Gemini
-    GEMINI_API_KEY: Optional[str] = None
-    GEMINI_MODEL: str = "gemini-2.0-flash"
-
+    # AI Provider (Groq)
+    GROQ_API_KEY: Optional[str] = None
+    AI_MODEL: str = "llama-3.3-70b-versatile"
     # Logging
     LOG_LEVEL: str = "INFO"
 
