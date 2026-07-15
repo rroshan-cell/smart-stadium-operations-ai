@@ -31,3 +31,7 @@ class AgentRequest(BaseModel):
     telemetry: Dict[str, Any]
     history: List[Dict[str, Any]] = []
     metadata: Optional[Dict[str, Any]] = {}
+
+class HealthResponse(BaseModel):
+    status: str
+    version: str
