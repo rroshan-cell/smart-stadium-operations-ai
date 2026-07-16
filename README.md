@@ -408,11 +408,22 @@ smart-stadium-operations-ai/
 │   └── simulation_engine.py          # State engine generating telemetry values
 │
 ├── tests/                            # PyTest suites
+│   ├── conftest.py                   # Shared pytest mock fixtures
 │   ├── test_agents.py                # Sub-agents logic flow tests
-│   └── test_main.py                  # API routes integration tests
+│   ├── test_api.py                   # FastAPI route integration tests
+│   ├── test_chat.py                  # Chat endpoint unit tests
+│   ├── test_context_manager.py       # ContextManager state and thread-safety tests
+│   ├── test_groq_service.py          # Groq SDK client mock tests
+│   ├── test_health.py                # Health endpoint validation tests
+│   ├── test_main.py                  # API routes legacy integration tests
+│   ├── test_prompt_manager.py        # Prompt templates unit tests
+│   ├── test_response_parser.py       # JSON parser and schema validator tests
+│   └── test_simulation.py            # Simulation states and telemetry tests
 │
 ├── utils/                            # Shared general helpers
 ├── .env.example                      # Reference environment configuration
+├── pytest.ini                        # PyTest execution configurations
+├── requirements-dev.txt              # Test suite dependencies
 ├── requirements.txt                  # Python dependencies
 ├── MULTI_AGENT_ARCHITECTURE.md       # Multi-agent design detail documentation
 ├── PROJECT_BLUEPRINT.md              # Application design blueprint document
