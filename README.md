@@ -20,6 +20,36 @@ Traditional monitoring dashboards display information but still require operator
 
 ---
 
+# 🌍 Live Demo
+
+Experience the live, production-ready environment of the Smart Stadium Operations AI:
+
+🔗 **[Live Command Center Deployment](https://smart-stadium-operations-ai-1.onrender.com)**
+
+### What Reviewers Can Explore:
+*   **Live Telemetry**: Real-time stadium metrics, attendance counters, gate occupancy, queue wait times, and system logs.
+*   **AI Operations Assistant**: Interact with the stateless AI assistant to query stadium status, analyze logs, and run commands.
+*   **Simulation Engine**: Trigger various operational scenarios (Normal Match, High Crowd, Medical Emergency, Security Threat, Severe Weather, Full Evacuation) and watch the dashboard adapt dynamically.
+*   **Analytics Dashboard**: Interactive charts visualizing attendance trends, queue times, and parking lot occupancy.
+*   **Multi-Agent System**: Watch the Coordinator and specialized agents collaborate to analyze situations and issue recommendations.
+
+---
+
+# 🚀 Repository Highlights
+
+*   **Production-Ready FastAPI Backend**: Asynchronous endpoints optimized for low latency and high concurrency.
+*   **Multi-Agent AI Architecture**: Collaborative network of specialized agents coordinated by a central orchestrator.
+*   **Groq-Powered Inference**: Lightning-fast response times driven by Groq's high-speed inference engine.
+*   **Real-Time Telemetry**: Seamlessly simulated stadium operational metrics updating at second-level intervals.
+*   **Interactive Command Dashboard**: A modern, dark-mode dashboard tailored for stadium incident commanders.
+*   **Stateless AI Assistant**: Conversation sessions that reset between loads to eliminate context drift and hallucination.
+*   **Live Analytics**: Dynamic Chart.js visualizations tracking attendance, queues, and resource utilization.
+*   **Automatic Render Deployment**: CI/CD pipeline integrated directly for GitHub to Render automatic builds.
+*   **Modular ES6 Frontend**: Clean, decoupled JavaScript modules managing specific dashboard logic.
+*   **Clean Project Architecture**: Strictly structured directories separating backend APIs, frontend, models, and agents.
+
+---
+
 # 🎯 Problem Statement
 
 Large sporting events involve managing:
@@ -51,6 +81,9 @@ The platform combines:
 
 Each specialized AI agent focuses on a specific operational domain while a central **Coordinator Agent** synthesizes their outputs into a unified response.
 
+### 👥 Human-in-the-Loop Operations
+The system is built on a Human-in-the-Loop (HITL) model. The AI agents are designed strictly to assist, not replace, human decision makers. Human operators retain final authority and command responsibility over all stadium directives. The platform provides structured operational intelligence, prioritizes risks based on safety parameters, and recommends specific, actionable steps so commanders can make informed decisions rapidly.
+
 ---
 
 # ✨ Key Features
@@ -67,7 +100,7 @@ Specialized agents collaborate together:
 - Visitor Support Agent
 - Weather Intelligence Agent
 
-All communication is orchestrated through a **Coordinator Agent**.
+All communication is orchestrated through a **Coordinator Agent** powered by Groq inference.
 
 ---
 
@@ -145,6 +178,22 @@ This improves maintainability, scalability, and separation of concerns.
 
 ---
 
+# 🤖 AI Decision Workflow
+
+Below is the workflow showing how operational queries and telemetry are processed through the multi-agent system:
+
+```mermaid
+graph TD
+    A["User Query / Telemetry"] --> B["Coordinator Agent"]
+    B --> C["Specialized Agents (Crowd, Security, Emergency, etc.)"]
+    C --> D["Shared Context Assembly"]
+    D --> E["Groq Llama 3.3-70b Inference"]
+    E --> F["Operational Analysis & Risk Assessment"]
+    F --> G["Dashboard Response & Tactical Recommendations"]
+```
+
+---
+
 # 🏗️ System Architecture
 
 ```
@@ -154,7 +203,7 @@ This improves maintainability, scalability, and separation of concerns.
                   Simulation Engine
                             │
                             ▼
-                  Coordinator Agent
+                  Coordinator Agent (Groq / Llama 3.3 70B)
                             │
       ┌────────────┬────────────┬────────────┐
       ▼            ▼            ▼
@@ -176,6 +225,51 @@ Transport     Maintenance    Weather
 
 ---
 
+# 💬 Chat Architecture
+
+The AI Operator Chat features a stateless, high-reliability design:
+- **Stateless AI Assistant**: The chat assistant does not retain session state, ensuring each request is evaluated purely on current, verified telemetry.
+- **Session-Bound UI**: Every browser refresh starts a fresh operational session.
+- **No Persistence**: Conversation history is intentionally NOT persisted to prevent the carryover of stale metrics or resolved alerts.
+- **Intentional Clear**: Chat history is cleared between sessions to eliminate LLM hallucinations and maintain a clean operational context.
+
+---
+
+# 📊 Performance Highlights
+
+*   **Reduced Token Usage**: Telemetry and context payloads are strictly pruned to prevent token bloat.
+*   **Optimized Prompts**: Prompt templates are carefully engineered to produce dense, structured operational directives with minimal token overhead.
+*   **Lower Inference Latency**: The application leverages Groq's specialized hardware platform for extremely low latency.
+*   **Groq High-Speed Inference**: Sub-second token generation times for immediate tactical assistance.
+*   **Stateless Chat Architecture**: Bypassing server-side history checks cuts database lookup times to zero.
+*   **Faster Response Generation**: Highly concurrent asynchronous agent orchestration reduces total wait times.
+*   **Reduced API Costs**: Optimal token density and minimal model invocations ensure high cost-efficiency.
+*   **Modular Architecture**: Parallelized task execution avoids execution blocking.
+*   **Lightweight Frontend**: Vanilla ES6 components run entirely client-side without bloated framework initialization steps.
+
+---
+
+# ⚡ Why Groq?
+
+Groq has been integrated as the primary AI inference provider for its unique capabilities in real-time environments:
+*   **Extremely Low Latency**: In stadium command centers, response speed is measured in seconds. Groq's high-speed inference ensures answers are returned instantly.
+*   **Production Scalability**: Highly predictable response times under load, making it suitable for multi-agent workloads.
+*   **Cost Efficiency**: Highly optimized token processing enables sustainable long-term hosting.
+*   **Better User Experience**: Seamless chat rendering and fast recommendations keep operators focused.
+*   **Reliable Structured Outputs**: Consistent execution of system instructions and complex operational schemas.
+*   **Real-Time Suitability**: Meets the immediate situational awareness needs of live incident commanders.
+
+---
+
+# 📈 Project Status
+
+- **Production Ready**: Fully polished, tested, and ready for deployment.
+- **Live Deployment Available**: Live application instances can be hosted for instant access.
+- **Automatic GitHub → Render Deployment**: Configured with CI/CD triggers to automatically redeploy from the GitHub repository directly to Render.
+- **Optimized for Hackathon Evaluation**: Pre-configured scenarios and optimized inference speeds ensure a seamless reviewer experience.
+
+---
+
 # 🛠 Technology Stack
 
 ## Backend
@@ -187,7 +281,9 @@ Transport     Maintenance    Weather
 
 ## AI
 
-- Google Gemini API
+- Groq API (Groq Python SDK)
+- Llama 3.3 70B Versatile model (`llama-3.3-70b-versatile`)
+- Groq high-speed inference
 - Multi-Agent Architecture
 
 ## Frontend
@@ -253,7 +349,8 @@ pip install -r requirements.txt
 Create a `.env` file:
 
 ```env
-GEMINI_API_KEY=YOUR_API_KEY
+GROQ_API_KEY=YOUR_GROQ_API_KEY
+AI_MODEL=llama-3.3-70b-versatile
 LOG_LEVEL=INFO
 ```
 
@@ -279,7 +376,7 @@ http://127.0.0.1:8000
 |----------|----------------------------|----------------------------------|
 | GET | `/api/v1/simulation/state` | Get live telemetry |
 | POST | `/api/v1/simulation/start` | Start simulation |
-| POST | `/api/v1/chat` | AI operator chat |
+| POST | `/api/v1/chat` | AI operator chat (Groq-powered) |
 | GET | `/api/v1/agents/status` | Agent status |
 | GET | `/api/v1/agents/alerts` | Active alerts |
 | GET | `/health` | Health check |
@@ -306,11 +403,16 @@ Latest verified result:
 
 # 🔒 Security
 
-- Environment-based API key configuration
-- No secrets committed to Git
-- Input validation using Pydantic
-- Centralized exception handling
-- Structured logging
+*   **Environment-Based Secret Management**: All credentials (e.g., `GROQ_API_KEY`) are managed strictly via system environment variables.
+*   **No Secrets Committed to Git**: Essential configuration credentials and keys are excluded from code versioning.
+*   **Request Validation**: Strict request parameters and datatypes are validated at the API boundary using Pydantic schemas.
+*   **Defensive API Design**: Strong error bounds and custom fallbacks ensure that backend exceptions never leak raw stack traces or internal infrastructure details.
+*   **Stateless AI Conversations**: The AI assistant handles user prompts and telemetry queries statelessly to prevent context drift, data leakage, and session cross-contamination.
+*   **No Persistent Chat Storage**: Chat histories are intentionally kept in volatile memory or discarded immediately after response synthesis.
+*   **Operational Privacy**: No personal identifier information is processed or stored, keeping telemetry strictly focused on hardware and logistics events.
+*   **Secure Deployment Practices**: Continuous delivery configurations on Render deploy through isolated containers and enforce SSL-terminated HTTPS.
+*   **Centralized Exception Handling**: All application exceptions are intercepted and mapped to appropriate error responses.
+*   **Structured Logging**: Application events and security indicators are stored in structured JSON formats.
 
 ---
 
@@ -328,31 +430,39 @@ The dashboard includes:
 
 # 🚀 Deployment
 
-The application is designed as a **single FastAPI application** that serves:
+The application is designed as a **single FastAPI application** serving both backend APIs and frontend static assets. This facilitates instant, hassle-free deployment:
 
-- Backend APIs
-- Frontend static assets
-
-This simplifies deployment on platforms such as:
-
-- Render
-- Railway
-- Azure App Service
-- Google Cloud Run
+- **Automatic GitHub → Render deployment**: Easily host the app on Render, which automatically builds and runs the containerized or Python-based project.
+- Also compatible with:
+  - Railway
+  - Azure App Service
+  - Google Cloud Run
 
 ---
 
 # 📸 Screenshots
 
-> Add screenshots before final submission.
+Below is a visual walkthrough of the Smart Stadium Operations AI dashboard and the specialized operational command views.
 
-Suggested screenshots:
+### 1. Operations Command Center Dashboard
+![Operations Command Center Dashboard](assets/dashboard_normal.png)
+*The main command center interface displaying live telemetry, dynamic stadium gates, the AI active incident feed, the AI Operations Assistant chat interface, facilities status, and resource counts.*
 
-- Dashboard
-- Analytics
-- Medical Emergency Scenario
-- Security Threat Scenario
-- Incident Feed
+### 2. Crowd Operations Management
+![Crowd Operations Management](assets/crowd_operations.png)
+*Real-time crowd analysis showing crowd density index, concourse hotspots, predictive egress times, and specialized AI crowd mitigation recommendations.*
+
+### 3. Security Command Operations
+![Security Command Operations](assets/security_operations.png)
+*Security operations view featuring threat assessments, active security patrols, live CCTV camera matrices, and security log dispatch.*
+
+### 4. Emergency Response Directive
+![Emergency Response Directive](assets/emergency_response.png)
+*Emergency directive module outlining evacuation readiness, active medical/life-safety units, triage tent statuses, and live safety dispatch queues.*
+
+### 5. Transportation & Infrastructure Logistics
+![Transportation & Infrastructure Logistics](assets/transportation_logistics.png)
+*Logistics dashboard tracking parking lot capacities, regional traffic indices, transit shuttle statuses, and average egress ETA metrics.*
 
 ---
 
