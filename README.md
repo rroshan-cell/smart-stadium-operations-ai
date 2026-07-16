@@ -298,28 +298,80 @@ Groq has been integrated as the primary AI inference provider for its unique cap
 # 📂 Project Structure
 
 ```
-backend/
+smart-stadium-operations-ai/
 │
-├── routes/
-├── dependencies.py
-├── config.py
-└── main.py
-
-agents/
-
-services/
-
-models/
-
-frontend/
+├── .github/
+│   └── workflows/
+│       └── keep-render-awake.yml     # GitHub Actions workflow to keep Render active
 │
-├── js/
-├── style.css
-└── index.html
-
-tests/
-
-requirements.txt
+├── agents/                           # Multi-Agent systems layer
+│   ├── base_agent.py                 # Common agent interface and prompt execution
+│   ├── coordinator.py                # Coordinating orchestrator agent
+│   ├── crowd_management_agent.py     # Specialised agent for crowd egress and logistics
+│   ├── emergency_response_agent.py   # Specialised agent for medical/evacuation dispatch
+│   ├── maintenance_agent.py          # Specialised agent for facility checkups
+│   ├── security_agent.py             # Specialised agent for security dispatch and risk mitigation
+│   ├── transportation_agent.py       # Specialised agent for transit lines and parking lot flow
+│   ├── visitor_support_agent.py      # Specialised agent for info requests and public alerts
+│   └── weather_intelligence_agent.py # Specialised agent for storm/wind scenario monitoring
+│
+├── assets/                           # Image assets and screenshots gallery
+│   ├── crowd_operations.png
+│   ├── dashboard_normal.png
+│   ├── emergency_response.png
+│   ├── security_operations.png
+│   └── transportation_logistics.png
+│
+├── backend/                          # FastAPI Backend Layer
+│   ├── routes/                       # FastAPI router endpoints
+│   │   ├── agents.py                 # Sub-agent analysis results route
+│   │   ├── chat.py                   # Chat Operations Route (Groq Llama 3.3 endpoint)
+│   │   ├── health.py                 # Health and status checking route
+│   │   └── simulation.py             # Simulation controls and telemetry state route
+│   ├── config.py                     # Config settings parsing environment variables
+│   ├── dependencies.py               # Dependency injection providers for services/agents
+│   ├── exceptions.py                 # App-wide exception handlers
+│   ├── logger.py                     # Custom logger configuring formatting
+│   └── main.py                       # Main FastAPI app server setup
+│
+├── frontend/                         # Vanilla CSS/JS client app
+│   ├── js/                           # Decoupled ES6 scripts
+│   │   ├── AttendanceAnimator.js     # Live attendance counter animator
+│   │   ├── ChatController.js         # Chat UI interactive client
+│   │   ├── ClockManager.js           # Header local date time display
+│   │   ├── DashboardAPI.js           # AJAX fetch client wrappers
+│   │   ├── DashboardController.js    # Master page state orchestrator
+│   │   ├── GateManager.js            # Gate status grids manager
+│   │   ├── IncidentFeed.js           # Dynamic alerts updates drawer
+│   │   ├── LoadingManager.js         # Loader overlays manager
+│   │   ├── SidebarController.js      # Sidebar items navigator
+│   │   ├── SimulationController.js   # Simulation scenarios control bar
+│   │   ├── ToastManager.js           # Status toast messaging notifications
+│   │   └── Utils.js                  # Shared styling utility helpers
+│   ├── index.html                    # Single Page Application HTML frame
+│   ├── script.js                     # ES6 entry point script
+│   └── style.css                     # Command center CSS design stylesheet
+│
+├── models/                           # Common models
+│   └── schemas.py                    # Pydantic schemas for data validation
+│
+├── services/                         # Internal core services
+│   ├── context_manager.py            # Local cache of incident scenarios context
+│   ├── gemini_service.py             # Groq service layer (wrapper class)
+│   ├── prompt_manager.py             # Prompt builder with templated guidelines
+│   ├── response_parser.py            # Helper utility parsing structured JSON blocks
+│   └── simulation_engine.py          # State engine generating telemetry values
+│
+├── tests/                            # PyTest suites
+│   ├── test_agents.py                # Sub-agents logic flow tests
+│   └── test_main.py                  # API routes integration tests
+│
+├── utils/                            # Shared general helpers
+├── .env.example                      # Reference environment configuration
+├── requirements.txt                  # Python dependencies
+├── MULTI_AGENT_ARCHITECTURE.md       # Multi-agent design detail documentation
+├── PROJECT_BLUEPRINT.md              # Application design blueprint document
+└── README.md                         # Main repository documentation
 ```
 
 ---
