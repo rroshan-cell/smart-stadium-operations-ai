@@ -19,6 +19,13 @@ class BaseAgent:
         shared_ctx_dict = {}
         if self.context_manager:
             shared_ctx_dict = self.context_manager.get_full_context()
+
+            # Do not expose previous AI conversation to the LLM
+            shared_ctx_dict.pop("ai_decisions", None)
+            shared_ctx_dict.pop("agent_outputs", None)
+            shared_ctx_dict.pop("conversation", None)
+            shared_ctx_dict.pop("chat_history", None)
+            shared_ctx_dict.pop("messages", None)
             
             # Log reading shared memory
             logger.debug(f"Agent {self.name} read blackboard memory with last update: {shared_ctx_dict.get('last_update')}")
