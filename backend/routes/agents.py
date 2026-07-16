@@ -33,24 +33,39 @@ async def route_to_agents(
 async def get_stadium_status(
     sim_engine: SimulationEngine = Depends(get_sim_engine)
 ):
-    """Returns live stadium status derived from the simulation engine."""
+    """Returns live stadium status enriched with advanced operational metrics."""
     state = sim_engine.get_state()
     telemetry = state["telemetry"]
+    metrics = state["metrics"]
     num_alerts = len(telemetry.get("active_alerts", []))
+    
     return {
         "attendance": int(telemetry.get("attendance", 70000)),
-        "capacity_pct": round((telemetry.get("attendance", 70000) / telemetry.get("max_capacity", 82500)) * 100, 1),
+        "capacity_pct": metrics.get("crowd_density"),
         "active_alerts": num_alerts,
         "avg_queue_time": telemetry.get("avg_queue_time", 3),
-        "parking_occupancy": round(telemetry.get("parking", 75), 1),
-        "ai_confidence": 0.95,
+        "parking_occupancy": metrics.get("parking_utilization"),
+        "ai_confidence": metrics.get("ai_confidence"),
         "scenario": state.get("scenario", "Normal Match"),
         "gates": telemetry.get("gates", {
             "gate-a": "green",
             "gate-b": "green",
             "gate-c": "green",
             "gate-d": "green"
-        })
+        }),
+        # Advanced operational metrics
+        "risk_score": metrics.get("risk_score"),
+        "crowd_density": metrics.get("crowd_density"),
+        "incident_severity": metrics.get("incident_severity"),
+        "queue_prediction": metrics.get("queue_prediction"),
+        "response_time": metrics.get("response_time"),
+        "parking_utilization": metrics.get("parking_utilization"),
+        "fan_zone_load": metrics.get("fan_zone_load"),
+        "gate_utilization": metrics.get("gate_utilization"),
+        "weather_risk": metrics.get("weather_risk"),
+        "emergency_readiness": metrics.get("emergency_readiness"),
+        "evacuation_readiness": metrics.get("evacuation_readiness"),
+        "command_readiness": metrics.get("command_readiness")
     }
 
 @router.get("/alerts")
@@ -62,7 +77,6 @@ async def get_active_alerts(
     telemetry = state["telemetry"]
     sim_alerts = telemetry.get("active_alerts", [])
 
-    # Enrich simulation alerts with required frontend fields if missing
     enriched = []
     for alert in sim_alerts:
         enriched.append({
@@ -71,8 +85,9 @@ async def get_active_alerts(
             "priority": alert.get("priority", "warning"),
             "area": alert.get("area", "Stadium General"),
             "action": alert.get("action", "AI agents are monitoring the situation."),
-            "confidence": 0.92,
-            "timestamp": alert.get("timestamp", "")
+            "confidence": 0.95,
+            "timestamp": alert.get("timestamp", ""),
+            "message": alert.get("message", "")
         })
 
     return enriched

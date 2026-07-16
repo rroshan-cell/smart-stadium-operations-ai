@@ -21,7 +21,7 @@ def groq_debug():
 
     return {
         "has_key": bool(settings.GROQ_API_KEY),
-        "key_prefix": settings.GROQ_API_KEY[:10] if settings.GROQ_API_KEY else None,
+        "api_configured": bool(settings.GROQ_API_KEY) if settings.GROQ_API_KEY else None,
         "env_key": bool(os.getenv("GROQ_API_KEY")),
         "model": settings.AI_MODEL
     }    

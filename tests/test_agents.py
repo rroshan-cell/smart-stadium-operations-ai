@@ -1,7 +1,7 @@
 import pytest
 import asyncio
 from unittest.mock import AsyncMock, MagicMock
-from models.schemas import AgentResponse, AgentRequest, ConfidenceScore, Recommendation
+from models.schemas import AgentResponse, AgentRequest, ConfidenceScore, Recommendation, RoutingDecision
 from agents.coordinator import CoordinatorAgent
 from agents.crowd_management_agent import CrowdManagementAgent
 from services.gemini_service import GeminiService
@@ -35,13 +35,20 @@ async def test_full_coordinator_flow(mock_gemini, mock_agent_response):
     coordinator.add_agent(crowd_agent)
 
     # 1. Mock Routing Decision
-    mock_gemini.chat.return_value = "CrowdManagement"
+    mock_routing_decision = RoutingDecision(
+        selected_agents=["CrowdManagement"],
+        reason="Test evacuation query requires crowd management.",
+        confidence=0.95,
+        evidence="smoke_detected",
+        operational_explanation="Deploy crowd agent to manage evacuation paths."
+    )
     
     # 2. Mock Individual Agent Response
     # 3. Mock Coordinator Synthesis Response
     mock_gemini.generate_structured_response.side_effect = [
-        mock_agent_response,  # First call from Crowd Agent
-        mock_agent_response   # Second call from Coordinator Synthesis
+        mock_routing_decision, # First call for determine_routing
+        mock_agent_response,   # Second call from Crowd Agent
+        mock_agent_response    # Third call from Coordinator Synthesis
     ]
 
     request = AgentRequest(query="Evacuate the stadium", telemetry={"smoke_detected": True})
@@ -50,8 +57,7 @@ async def test_full_coordinator_flow(mock_gemini, mock_agent_response):
     
     assert isinstance(result, AgentResponse)
     assert result.requires_human_approval is True
-    assert mock_gemini.chat.called
-    assert mock_gemini.generate_structured_response.call_count == 2
+    assert mock_gemini.generate_structured_response.call_count == 3
 
 @pytest.mark.asyncio
 async def test_agent_error_fallback(mock_gemini):

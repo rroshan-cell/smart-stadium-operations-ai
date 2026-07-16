@@ -245,7 +245,12 @@ class DashboardController {
         
         let predictedCongestion = 'Low exit risk expected.';
         let crowdRecomendations = 'Maintain status quo gates.';
-        if (telemetry.avg_queue_time > 8 || crowdDensity > 95) {
+        if (statusData && statusData.queue_prediction !== undefined) {
+            predictedCongestion = `Predicted Queue Wait: ${statusData.queue_prediction}m (Concourse density: ${statusData.crowd_density}%).`;
+            if (statusData.queue_prediction > 8) {
+                crowdRecomendations = 'Begin opening outer security gates. Redirect visitor egress to west corridor.';
+            }
+        } else if (telemetry.avg_queue_time > 8 || crowdDensity > 95) {
             predictedCongestion = 'High queue risk at exit gates A & C (Probability 85%).';
             crowdRecomendations = 'Begin opening outer security gates. Redirect visitor egress to west corridor.';
         }
@@ -259,12 +264,21 @@ class DashboardController {
         // 2. Security Panel
         let threatLevel = 'NORMAL (LOW RISK)';
         let threatColor = 'var(--green)';
-        if (telemetry.active_alerts && telemetry.active_alerts.some(a => a.id.includes('SEC') || a.priority === 'critical')) {
-            threatLevel = 'HIGH (CRITICAL HAZARD)';
-            threatColor = 'var(--red)';
-        } else if (telemetry.avg_queue_time > 10) {
-            threatLevel = 'ELEVATED (MODERATE)';
-            threatColor = 'var(--yellow)';
+        if (statusData && statusData.incident_severity) {
+            threatLevel = `${statusData.incident_severity} (RISK SCORE: ${statusData.risk_score})`;
+            if (statusData.incident_severity === 'CRITICAL') {
+                threatColor = 'var(--red)';
+            } else if (statusData.incident_severity === 'HIGH') {
+                threatColor = 'var(--yellow)';
+            }
+        } else {
+            if (telemetry.active_alerts && telemetry.active_alerts.some(a => a.id.includes('SEC') || a.priority === 'critical')) {
+                threatLevel = 'HIGH (CRITICAL HAZARD)';
+                threatColor = 'var(--red)';
+            } else if (telemetry.avg_queue_time > 10) {
+                threatLevel = 'ELEVATED (MODERATE)';
+                threatColor = 'var(--yellow)';
+            }
         }
         
         const secLevelVal = document.getElementById('security-level-val');
@@ -292,9 +306,18 @@ class DashboardController {
         
         let evacText = 'STANDBY (NORMAL OPERATIONS)';
         let evacColor = 'var(--green)';
-        if (telemetry.active_alerts && telemetry.active_alerts.some(a => (a.title || '').includes('EVACUATION'))) {
-            evacText = 'ACTIVE (STADIUM LEVEL EVACUATION IN PROGRESS)';
-            evacColor = 'var(--red)';
+        if (statusData && statusData.evacuation_readiness !== undefined) {
+            if (statusData.scenario === 'Full Stadium Evacuation') {
+                evacText = `ACTIVE (EVAC READINESS: ${statusData.evacuation_readiness}%)`;
+                evacColor = 'var(--red)';
+            } else {
+                evacText = `STANDBY (EVAC READINESS: ${statusData.evacuation_readiness}%)`;
+            }
+        } else {
+            if (telemetry.active_alerts && telemetry.active_alerts.some(a => (a.title || '').includes('EVACUATION'))) {
+                evacText = 'ACTIVE (STADIUM LEVEL EVACUATION IN PROGRESS)';
+                evacColor = 'var(--red)';
+            }
         }
         if (emergEvac) {
             emergEvac.textContent = evacText;
@@ -325,7 +348,9 @@ class DashboardController {
         if (parkC) parkC.textContent = `${Math.max(20, Math.round(basePark * 0.8))}%`;
 
         if (transportShuttles) {
-            if (basePark > 85) {
+            if (statusData && statusData.command_readiness !== undefined) {
+                transportShuttles.textContent = `Transit Active. Command Readiness: ${statusData.command_readiness}%, Response Target: ${statusData.response_time}.`;
+            } else if (basePark > 85) {
                 transportShuttles.textContent = '12 Active Shuttles, Egress redirection initiated.';
             } else {
                 transportShuttles.textContent = '6 Active Shuttles (Regular intervals).';
