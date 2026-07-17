@@ -433,7 +433,7 @@
 
                     <div class="glass-card" style="margin-top: 10px;">
                         <div class="card-header">Wayfinding Reference FAQ</div>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 10px;">
+                        <div class="faq-grid">
                             <div class="faq-item">
                                 <div style="font-weight: 600; font-size: 0.8rem; margin-bottom: 4px; color: var(--gold);">Q: How do guests navigate from Section 112 to West Transit Loop?</div>
                                 <div class="small-text">A: Follow signage to Gate D, then take the ramp to the western bus queue terminals. Access maps are updated on client devices.</div>
@@ -493,7 +493,7 @@
                                 <input type="text" id="settings-api-base" style="width: 100%;" required>
                             </div>
 
-                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                            <div class="settings-grid">
                                 <div style="display: flex; flex-direction: column; gap: 5px;">
                                     <label for="settings-poll-rate" style="font-size: 0.75rem; font-weight: 600; color: var(--text-dim);">TELEMETRY REFRESH RATE (SECONDS)</label>
                                     <input type="number" id="settings-poll-rate" min="1" max="60" required>
@@ -507,7 +507,7 @@
                                 </div>
                             </div>
 
-                            <div style="display: flex; justify-content: flex-end; gap: 10px; border-top: 1px solid var(--glass-border); padding-top: 15px; margin-top: 10px;">
+                            <div class="settings-actions">
                                 <button type="button" id="settings-clear-chat" style="background: rgba(255,51,51,0.15); border: 1px solid var(--red); color: var(--red);">RESET CHAT LOGS</button>
                                 <button type="submit" style="background: var(--gold); color: black;">APPLY CHANGES</button>
                             </div>

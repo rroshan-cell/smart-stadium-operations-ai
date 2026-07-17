@@ -3,6 +3,7 @@ import json
 from typing import Optional, Type, TypeVar
 
 from groq import Groq
+from services.response_parser import ResponseParser
 from pydantic import BaseModel
 
 from backend.config import settings
@@ -24,7 +25,7 @@ class GeminiService:
         if not self.api_key:
             raise GeminiError("GROQ_API_KEY not configured")
 
-        self.client = Groq(api_key=self.api_key)
+        self.client = Groq(api_key=self.api_key, timeout=15.0)
         self.model = settings.AI_MODEL
 
     async def chat(self, message: str, history: Optional[list] = None) -> str:
@@ -158,9 +159,7 @@ Return JSON only.
 
             logger.info("Structured response generated successfully.")
 
-            data = json.loads(text)
-
-            return response_model.model_validate(data)
+            return ResponseParser.validate_response(text, response_model)
 
         except Exception as e:
             logger.exception("Groq structured generation failed")
