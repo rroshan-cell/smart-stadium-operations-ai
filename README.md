@@ -5,9 +5,13 @@
 ![Python](https://img.shields.io/badge/Python-3.12-blue)
 ![FastAPI](https://img.shields.io/badge/FastAPI-Backend-green)
 ![JavaScript](https://img.shields.io/badge/JavaScript-ES6-yellow)
+![Groq](https://img.shields.io/badge/Groq-Llama%203.3-orange)
 ![Status](https://img.shields.io/badge/Status-Production%20Ready-success)
+![Tests](https://img.shields.io/badge/Tests-45%2F45%20Passing-brightgreen)
 ![Coverage](https://img.shields.io/badge/Coverage-94%25-brightgreen)
+![Deployment](https://img.shields.io/badge/Deployment-Render-blue)
 ![License](https://img.shields.io/badge/License-MIT-blue)
+
 
 ---
 
@@ -19,8 +23,9 @@
 *   **94% Test Coverage**: High testing confidence backed by 45 offline, deterministic automated tests.
 *   **FastAPI Backend**: Asynchronous endpoints optimized for low latency and high concurrency.
 *   **Render Deployment**: Configured for continuous delivery directly to cloud environments.
-*   **Groq-Powered AI**: Powered by Llama 3.3 70B Versatile model with sub-second token generation times.
-*   **Responsive Dashboard**: Implemented with vanilla CSS/JS and dynamic Chart.js live telemetry counters.
+*   **Groq-Powered AI**: Powered by Llama 3.3 70B Versatile model (`llama-3.3-70b-versatile`) with sub-second token generation times.
+*   **ResponseParser Resiliency**: Integrates automatic JSON extraction, cleanup, and verification to handle LLM structured completions robustly.
+*   **Responsive Dashboard**: Fully responsive design supporting Desktop (1920px+), Laptop (1366px), Tablet (Landscape/Portrait), and Mobile (Landscape/Portrait) layouts with mobile-optimized forms and scrollable tables.
 *   **Operational Decision Support**: Translates telemetry indexes into prioritized Incident Commander guidelines.
 
 ---
@@ -245,15 +250,19 @@ The AI Operator Chat features a stateless, high-reliability design:
 
 ---
 
-# 📊 Performance Highlights
+# ⚡ Performance Optimizations
 
-The application is optimized for rapid-response hackathon evaluations and production-ready deployments:
-- **Reduced Token Usage**: Refined templates and telemetry compression minimize the size of payloads sent to the LLM.
-- **Prompt Optimization**: Prompt templates are carefully engineered to produce dense, structured operational directives with minimal token overhead.
-- **Smaller Telemetry Payloads**: Unnecessary background data is filtered out, focusing purely on active alerts and immediate metrics.
-- **Faster Groq Inference**: Powered by the Groq API for extremely fast token generation.
-- **Lower Operational Cost**: Reduced transaction volume and efficient prompt payloads significantly lower API usage costs.
-- **Production-Ready Deployment**: Configured for high-concurrency, low-latency execution in live operations.
+The application is optimized for real-time responsiveness, safety, and production reliability:
+- **Prompt Optimization**: Prompt templates are structured to generate structured, actionable command directives with minimal token overhead.
+- **Reduced Token Usage**: Telemetry compression and stateless designs minimize payload sizes sent to the LLM.
+- **Groq Low Latency**: Powered by Groq's high-speed inference engine for sub-second operational recommendations.
+- **ResponseParser Resiliency**: Structural JSON extraction and repair prevent failures from LLM formatting issues.
+- **Stateless AI**: Requests evaluate fresh telemetry snapshots, preventing memory accumulation and hallucination carryover.
+- **Async FastAPI Backend**: Non-blocking asynchronous route designs support high-concurrency connections.
+- **Timeout Protection**: 15-second request timeouts protect API endpoints from upstream delays.
+- **Modular Frontend**: Built on decoupled, zero-build ES6 JavaScript modules for client-side efficiency.
+- **Efficient Telemetry Updates**: Telemetry status endpoints are kept separate from resource-heavy agent reasoning cycles.
+- **Production Deployment Configuration**: Integrated production environment locks, CORS controls, and exception masking ensure secure cloud execution.
 
 ---
 
@@ -345,7 +354,7 @@ Continuous Integration and Continuous Delivery is configured using:
 ```
 smart-stadium-operations-ai/
 │
-├── .github/
+├── .github/                          # GitHub actions and workflows
 │   └── workflows/
 │       └── keep-render-awake.yml     # GitHub Actions workflow to keep Render active
 │
@@ -361,9 +370,11 @@ smart-stadium-operations-ai/
 │   └── weather_intelligence_agent.py # Specialised agent for storm/wind scenario monitoring
 │
 ├── assets/                           # Image assets and screenshots gallery
+│   ├── analytics_dashboard.png       # Live telemetry analytics view screenshot
 │   ├── crowd_operations.png
 │   ├── dashboard_normal.png
 │   ├── emergency_response.png
+│   ├── mobile_responsive.jpg         # Mobile view screenshot
 │   ├── security_operations.png
 │   └── transportation_logistics.png
 │
@@ -378,6 +389,8 @@ smart-stadium-operations-ai/
 │   ├── exceptions.py                 # App-wide exception handlers
 │   ├── logger.py                     # Custom logger configuring formatting
 │   └── main.py                       # Main FastAPI app server setup
+│
+├── docs/                             # Project documentation and specifications
 │
 ├── frontend/                         # Vanilla CSS/JS client app
 │   ├── js/                           # Decoupled ES6 scripts
@@ -407,6 +420,8 @@ smart-stadium-operations-ai/
 │   ├── response_parser.py            # Helper utility parsing structured JSON blocks
 │   └── simulation_engine.py          # State engine generating telemetry values
 │
+├── static/                           # Static assets served directly by FastAPI
+│
 ├── tests/                            # PyTest suites
 │   ├── conftest.py                   # Shared pytest mock fixtures
 │   ├── test_agents.py                # Sub-agents logic flow tests
@@ -422,11 +437,15 @@ smart-stadium-operations-ai/
 │
 ├── utils/                            # Shared general helpers
 ├── .env.example                      # Reference environment configuration
+├── CHANGELOG.md                      # Project changelog document
+├── CONTRIBUTING.md                   # Guide for local setup and conventions
+├── LICENSE                           # Project MIT license file
+├── MULTI_AGENT_ARCHITECTURE.md       # Multi-agent design detail documentation
+├── PROJECT_BLUEPRINT.md              # Application design blueprint document
 ├── pytest.ini                        # PyTest execution configurations
 ├── requirements-dev.txt              # Test suite dependencies
 ├── requirements.txt                  # Python dependencies
-├── MULTI_AGENT_ARCHITECTURE.md       # Multi-agent design detail documentation
-├── PROJECT_BLUEPRINT.md              # Application design blueprint document
+├── SECURITY.md                       # Security policies and key management rules
 └── README.md                         # Main repository documentation
 ```
 
@@ -490,6 +509,20 @@ http://127.0.0.1:8000
 | GET | `/api/v1/agents/alerts` | Active alerts |
 | GET | `/health` | Health check |
 
+## Request Flow
+
+```mermaid
+graph TD
+    User["👤 User"] --> FastAPI["⚡ FastAPI"]
+    FastAPI --> Validation["🛡️ Pydantic Validation"]
+    Validation --> Coordinator["🧠 Coordinator Agent"]
+    Coordinator --> Specialized["👥 Specialized Agents"]
+    Specialized --> Groq["🔥 Groq Llama-3.3"]
+    Groq --> ResponseParser["⚙️ ResponseParser"]
+    ResponseParser --> Dashboard["📊 Frontend Dashboard"]
+```
+
+
 ---
 
 # 🔒 Security
@@ -498,19 +531,30 @@ http://127.0.0.1:8000
 *   **No API Keys Committed**: System configuration files are git-ignored to prevent key exposure.
 *   **Mock Testing Prevents Token Consumption**: Offline pytest suite runs locally without hitting the live Groq API.
 *   **Input Validation**: Enforces strict request payloads and datatypes using Pydantic schemas.
-*   **Structured Exception Handling**: Handlers intercept runtime and custom errors (like `GeminiError`), returning uniform JSON error responses.
+*   **Production CORS Configuration**: Removes wide CORS wildcards in presence of active authorization credentials, restricting access to verified local development and production-configured domains.
+*   **Production Exception Sanitization**: Intercepts unhandled global exceptions, logging tracebacks securely via `logger.exception()` on the server while returning generic, safe error payloads (`{"status": "failed", "error": "Internal Server Error"}`) to clients to prevent database and folder path exposures.
+*   **Protected Debug Operations**: Automatically restricts diagnostic metadata exposure by locking the `/groq-debug` route behind a 403 Forbidden check when `ENVIRONMENT=production` is active.
+*   **Inference Request Timeout**: Configures a 15-second timeout on all LLM requests to Groq to prevent thread blocking and network stalls.
+*   **ResponseParser JSON Verification**: Uses structural JSON validation rules to ensure LLM content parses securely against defined schemas.
 
 ---
 
-# ♿ Accessibility
+# ♿ Accessibility & Device Compatibility
 
-The dashboard includes:
+The command center is designed to meet strict accessibility and responsive compatibility guidelines across all devices:
 
-- Semantic HTML
-- ARIA-friendly structure
-- Responsive layouts
-- High-contrast interface
-- Keyboard-friendly navigation where applicable
+- **Multi-Device Compatibility**:
+  - **Desktop Support**: Supports full wide-screen layouts (1920px+) with side-by-side dashboards, detailed widget tables, and real-time timeline feeds.
+  - **Tablet Support**: Supports responsive columns and proportional layout sizing for both landscape and portrait tablet viewports.
+  - **Mobile Support**: Fully optimized for mobile screens, removing layout locks and stacking widgets vertically for seamless interaction.
+- **Responsive Layout**: Uses dynamic grid systems, flexible wrapping flexboxes, and CSS media queries to prevent horizontal overflow and content clipping.
+- **Keyboard Navigation**: Supported throughout, enabling access to tab links, interactive badges, selection controls, and input actions without a pointer device.
+- **Semantic HTML**: Built on standard HTML5 tag structures (`header`, `main`, `aside`, `footer`, `section`, `nav`) to aid screen readers and parsing tools.
+- **High Contrast**: Uses a premium, dark-mode color scheme with high-contrast text and badge colors to ensure optimal readability under all lighting conditions.
+- **Focus States**: Employs distinctive `:focus-visible` outline indicators to help keyboard users track the current cursor focus point.
+- **Responsive Charts**: Chart.js instances wrap inside fluid container blocks with adaptive constraints (`min-height` and `max-height`) for clean scaling.
+- **Responsive Tables**: Tables support horizontal scroll boundaries to remain fully viewable without breaking parent wrapper boxes on small viewports.
+
 
 ---
 
@@ -547,6 +591,15 @@ Below is a visual walkthrough of the Smart Stadium Operations AI dashboard and t
 ### 5. Transportation & Infrastructure Logistics
 ![Transportation & Infrastructure Logistics](assets/transportation_logistics.png)
 *Logistics dashboard tracking parking lot capacities, regional traffic indices, transit shuttle statuses, and average egress ETA metrics.*
+
+### 6. Real-Time Telemetry Analytics
+![Real-Time Telemetry Analytics](assets/analytics_dashboard.png)
+*Real-time telemetry analytics panel visualizing live attendance trends, gate queue time trends, parking lot occupancy rates, and active system alerts history.*
+
+### 7. Responsive Mobile View
+![Responsive Mobile View](assets/mobile_responsive.jpg)
+*Responsive mobile command center interface illustrating fluid viewport stacking, wrapped top controls navigation header, dynamic system status, and live attendance widgets.*
+
 
 ---
 
