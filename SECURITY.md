@@ -7,7 +7,7 @@ We take the security of the Smart Stadium Operations AI project seriously. This 
 ## 📞 Responsible Disclosure
 
 If you discover a security vulnerability in this project, please do **NOT** open a public issue. Instead, report it responsibly:
-1. Email the maintainer at `rroshan.ece@gmail.com` with a detailed description of the vulnerability.
+1. Email the maintainer at `ritikroshan223901@gmail.com` with a detailed description of the vulnerability.
 2. Include steps to reproduce, potential impact, and a proof of concept if available.
 3. Allow us reasonable time to investigate, address, and release a patch before making any public disclosure.
 
